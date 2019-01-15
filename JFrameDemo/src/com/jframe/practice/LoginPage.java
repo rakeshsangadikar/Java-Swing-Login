@@ -17,17 +17,23 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class LoginPage {
-	
 	static Connection connection = DBUtil.getConnection();
+	static JFrame jFrame = new JFrame("Login Page");
 
-	public static void main(String[] args) {
+	public LoginPage() {
 		// inserting frame
-		JFrame jFrame = new JFrame("Login Page");
 		jFrame.setSize(1000, 500);
 		jFrame.setResizable(false);
 		jFrame.getContentPane().setBackground(Color.GRAY);
 		jFrame.setLayout(null);
+	}
 
+	public static void main(String[] args) {
+		LoginPage login = new LoginPage();
+		login.HomePage();
+	}
+
+	public void HomePage() {
 		// adding login label in frame
 		JLabel loginLable = new JLabel("Login");
 		loginLable.setBounds(450, 10, 100, 50);
@@ -66,21 +72,25 @@ public class LoginPage {
 		jButton.setBackground(Color.BLACK);
 		jButton.setForeground(Color.WHITE);
 		jFrame.add(jButton);
-		
-		//login action listener
+
+		// login action listener
 		jButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String username = userNameTextField.getText();
 					String password = new String(passwordField.getPassword());
-					String query = "select * from user_master where user_name='"+username+"' AND user_password='"+password+"'";
+					String query = "select * from user_master where user_name='" + username + "' AND user_password='"
+							+ password + "'";
 					Statement st = connection.createStatement();
 					ResultSet rs = st.executeQuery(query);
-					if(rs.next())
-						JOptionPane.showMessageDialog(jFrame, "Login Successful", "Message", 1);
-					else
+					if (rs.next()) {
+						jFrame.getContentPane().removeAll();
+						AfterLogin login = new AfterLogin();
+						login.AfterLoginPage(username);
+						jFrame.repaint();
+					} else
 						JOptionPane.showMessageDialog(jFrame, "Login Failed", "Message", 0);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
